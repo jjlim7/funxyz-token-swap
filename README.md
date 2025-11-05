@@ -17,7 +17,30 @@ A modern, responsive single-page application for exploring token prices and conv
 - **TypeScript** - Type safety
 - **Vite** - Build tool and dev server
 - **Zustand** - State management
+- **Tailwind CSS v3** - Utility-first styling
 - **@funkit/api-base** - Token and price data API
+
+## Notable Design Choices
+
+### 🎨 Jupiter-Inspired Dark Theme
+The application features a dark color palette inspired by Jupiter Exchange, with semantic color naming (`bg-primary`, `text-secondary`, etc.) for consistency and maintainability.
+
+### 🎯 Modal-Based Token Selection
+Token selection uses a full-screen modal with:
+- **Search functionality** - Filter tokens by symbol or name
+- **Popular tokens grid** - Quick access to frequently used tokens
+- **Multi-chain support** - Visual chain indicators with color coding
+
+### 🧩 Component Architecture
+- **Atomic design principles** - Small, reusable components (`TokenIcon`, `Loader`, `ErrorBanner`)
+- **Feature-based organization** - Swap logic isolated in `features/swap/` with dedicated hooks, store, and business logic
+- **Separation of concerns** - UI components separate from state management and API calls
+
+### ⚡ Performance Optimizations
+- **Debounced inputs** - 300ms delay on amount changes to reduce API calls
+- **Memoized calculations** - `useMemo` for expensive computations and filtered lists
+- **Persistent state** - Zustand middleware saves user preferences to localStorage
+- **Lazy error handling** - Dismissible error banners with retry functionality
 
 ## Installation
 
