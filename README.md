@@ -56,12 +56,12 @@ npm run preview
 
 ## Supported Tokens
 
-| Symbol | Chain ID | Network |
-| ------ | -------- | ------- |
+| Symbol | Chain ID | Network  |
+| ------ | -------- | -------- |
 | USDC   | 1        | Ethereum |
 | WBTC   | 1        | Ethereum |
-| USDT   | 137      | Polygon |
-| ETH    | 8453     | Base    |
+| USDT   | 137      | Polygon  |
+| ETH    | 8453     | Base     |
 
 ## Project Structure
 
@@ -139,41 +139,9 @@ The application uses the FunKit API to fetch:
 - Loading indicators on token boxes
 - Disabled input during loading
 
-## Styling
-
-The application uses a modern, gradient-based design with:
-
-- **Color Scheme**: Blue primary color with gray accents
-- **Responsive Layout**: Mobile-first approach
-- **Animations**: Smooth transitions and loading spinners
-- **Accessibility**: Clear visual hierarchy and readable fonts
-
-## Browser Support
-
-- Chrome/Edge (latest)
-- Firefox (latest)
-- Safari (latest)
-- Mobile browsers (iOS Safari, Chrome Mobile)
-
 ## Performance Optimizations
 
 - Debounced USD input to reduce API calls
 - Memoized calculations to prevent unnecessary re-renders
 - Lazy loading of token data
 - Efficient state management with Zustand
-
-## Troubleshooting
-
-### API Key Issues
-- Ensure `VITE_FUNKIT_API_KEY` is set in `.env`
-- Check that the API key is valid and has appropriate permissions
-
-### Token Not Found
-- Verify the token symbol is correct
-- Check that the chain ID is supported
-- Try refreshing the page
-
-### Price Data Not Loading
-- Check your internet connection
-- Verify the API is accessible
-- Try clicking the retry button on error messages

@@ -4,6 +4,7 @@
  */
 
 import React, { useState, useMemo } from "react";
+import { TokenIcon } from "./TokenIcon";
 
 interface Token {
   symbol: string;
@@ -35,9 +36,13 @@ export const TokenSelectionModal: React.FC<TokenSelectionModalProps> = ({
 
     const query = searchQuery.toLowerCase();
     return tokens.filter(
-      (token) =>
-        token.symbol.toLowerCase().includes(query) ||
-        token.chainName.toLowerCase().includes(query)
+      (token) => {
+        const symbolMatch = token.symbol.toLowerCase().includes(query);
+        const fullNameMatch = getTokenName(token.symbol).toLowerCase().includes(query);
+        // Search only by token symbol and full name, not chain name
+        // This prevents "ethereum" from matching all tokens on Ethereum chain
+        return symbolMatch || fullNameMatch;
+      }
     );
   }, [tokens, searchQuery]);
 
@@ -86,7 +91,7 @@ export const TokenSelectionModal: React.FC<TokenSelectionModalProps> = ({
           <input
             type="text"
             className="flex-1 border-none outline-none text-[0.9375rem] text-text-primary bg-transparent placeholder:text-text-tertiary"
-            placeholder='Search any token. Include "." for exact match.'
+            placeholder='Search any token by name or symbol'
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             autoFocus
@@ -99,13 +104,12 @@ export const TokenSelectionModal: React.FC<TokenSelectionModalProps> = ({
             {popularTokens.map((token) => (
               <button
                 key={`${token.chainId}-${token.symbol}`}
-                className={`flex flex-col items-center gap-xs p-sm border border-border rounded-xl bg-bg-tertiary cursor-pointer transition-all duration-base hover:border-primary hover:bg-bg-hover ${
-                  selectedSymbol === token.symbol ? "border-primary bg-primary/10" : ""
-                }`}
+                className={`flex flex-col items-center gap-xs p-sm border border-border rounded-xl bg-bg-tertiary cursor-pointer transition-all duration-base hover:border-primary hover:bg-bg-hover ${selectedSymbol === token.symbol ? "border-primary bg-primary/10" : ""
+                  }`}
                 onClick={() => handleSelectToken(token.symbol)}
               >
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center text-xl text-white">
-                  {getTokenIcon(token.symbol)}
+                <div className="w-9 h-9 rounded-full bg-bg-secondary flex items-center justify-center overflow-hidden">
+                  <TokenIcon symbol={token.symbol} size={36} />
                 </div>
                 <span className="text-[0.6875rem] font-semibold text-text-primary">{token.symbol}</span>
               </button>
@@ -127,14 +131,13 @@ export const TokenSelectionModal: React.FC<TokenSelectionModalProps> = ({
               filteredTokens.map((token) => (
                 <button
                   key={`${token.chainId}-${token.symbol}`}
-                  className={`flex items-center justify-between gap-md p-md border-none bg-transparent cursor-pointer rounded-[10px] transition-all duration-base text-left w-full hover:bg-bg-hover ${
-                    selectedSymbol === token.symbol ? "bg-primary/10" : ""
-                  }`}
+                  className={`flex items-center justify-between gap-md p-md border-none bg-transparent cursor-pointer rounded-[10px] transition-all duration-base text-left w-full hover:bg-bg-hover ${selectedSymbol === token.symbol ? "bg-primary/10" : ""
+                    }`}
                   onClick={() => handleSelectToken(token.symbol)}
                 >
                   <div className="flex items-center gap-md flex-1 min-w-0">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center text-lg text-white">
-                      {getTokenIcon(token.symbol)}
+                    <div className="w-8 h-8 rounded-full bg-bg-secondary flex items-center justify-center overflow-hidden">
+                      <TokenIcon symbol={token.symbol} size={32} />
                     </div>
                     <div className="flex-1 flex flex-col gap-1 min-w-0">
                       <div className="text-[0.9375rem] font-semibold text-text-primary flex items-center gap-xs">
@@ -159,24 +162,6 @@ export const TokenSelectionModal: React.FC<TokenSelectionModalProps> = ({
     </div>
   );
 };
-
-// Helper function to get token icon (emoji placeholders)
-function getTokenIcon(symbol: string): string {
-  const icons: Record<string, string> = {
-    ETH: "⟠",
-    USDC: "💵",
-    USDT: "💲",
-    WBTC: "₿",
-    BTC: "₿",
-    WETH: "⟠",
-    SOL: "◎",
-    MATIC: "⬡",
-    AVAX: "🔺",
-    BNB: "💎",
-    LINK: "🔗",
-  };
-  return icons[symbol] || "🪙";
-}
 
 // Helper function to get full token name
 function getTokenName(symbol: string): string {

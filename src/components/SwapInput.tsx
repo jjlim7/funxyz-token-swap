@@ -4,6 +4,7 @@
  */
 
 import React from "react";
+import { TokenIcon } from "./TokenIcon";
 
 interface SwapInputProps {
   label: "Sell" | "Buy" | "Selling" | "Buying";
@@ -30,13 +31,13 @@ export const SwapInput: React.FC<SwapInputProps> = ({
 }) => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
-    
+
     // Allow empty string
     if (inputValue === "") {
       onChange("");
       return;
     }
-    
+
     // Allow only numbers and decimal point
     if (/^\d*\.?\d*$/.test(inputValue)) {
       onChange(inputValue);
@@ -68,19 +69,18 @@ export const SwapInput: React.FC<SwapInputProps> = ({
         />
 
         <button
-          className={`flex items-center gap-sm px-md py-sm border border-border rounded-xl cursor-pointer transition-all duration-base flex-shrink-0 ${
-            !selectedToken
+          className={`flex items-center gap-sm px-md py-sm border border-border rounded-xl cursor-pointer transition-all duration-base flex-shrink-0 ${!selectedToken
               ? "bg-success text-[#0D111C] border-success px-lg font-semibold hover:bg-success-dark hover:border-success-dark"
               : "bg-bg-secondary hover:bg-bg-hover hover:border-primary"
-          }`}
+            }`}
           onClick={onOpenTokenSelector}
           type="button"
         >
           {selectedToken ? (
             <>
-              <span className="w-6 h-6 rounded-full bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center text-base text-white">
-                {getTokenIcon(selectedToken)}
-              </span>
+              <div className="w-6 h-6 rounded-full bg-bg-secondary flex items-center justify-center overflow-hidden">
+                <TokenIcon symbol={selectedToken} size={24} />
+              </div>
               <span className="text-base font-semibold text-text-primary">{selectedToken}</span>
               <span className="text-xs text-text-secondary transition-transform duration-base group-hover:translate-y-0.5">▼</span>
             </>
@@ -139,21 +139,4 @@ export const SwapInput: React.FC<SwapInputProps> = ({
   );
 };
 
-// Helper function to get token icon (emoji placeholders)
-function getTokenIcon(symbol: string): string {
-  const icons: Record<string, string> = {
-    ETH: "⟠",
-    USDC: "💵",
-    USDT: "💲",
-    WBTC: "₿",
-    BTC: "₿",
-    WETH: "⟠",
-    SOL: "◎",
-    MATIC: "⬡",
-    AVAX: "🔺",
-    BNB: "💎",
-    LINK: "🔗",
-  };
-  return icons[symbol] || "🪙";
-}
 
