@@ -2,6 +2,11 @@
 
 A modern, responsive single-page application for exploring token prices and conversions using React, TypeScript, and Vite.
 
+## Screenshot
+
+![Token Price Explorer](./screenshot.png)
+*Add your screenshot here - replace `screenshot.png` with your actual screenshot file*
+
 ## Features
 
 - **Token Selection**: Choose from USDC, WBTC, USDT, and ETH tokens
@@ -13,10 +18,11 @@ A modern, responsive single-page application for exploring token prices and conv
 
 ## Tech Stack
 
-- **React 18** - UI framework
+- **React 19** - UI framework (conscious choice for latest features; tested against 19.1.x)
 - **TypeScript** - Type safety
 - **Vite** - Build tool and dev server
-- **Zustand** - State management
+- **TanStack Query v5** - Server state management with intelligent caching, automatic refetching, and optimistic updates
+- **Zustand** - Client state management
 - **Tailwind CSS v3** - Utility-first styling
 - **@funkit/api-base** - Token and price data API
 
@@ -41,6 +47,36 @@ Token selection uses a full-screen modal with:
 - **Memoized calculations** - `useMemo` for expensive computations and filtered lists
 - **Persistent state** - Zustand middleware saves user preferences to localStorage
 - **Lazy error handling** - Dismissible error banners with retry functionality
+- **TanStack Query caching** - Intelligent cache management with 30s staleTime for prices, 1hr for token metadata
+- **Background refetching** - Automatic price updates every 30 seconds and on window focus
+- **Placeholder data** - Previous data shown during refetch to eliminate loading flashes
+
+## Product Research & Industry Patterns
+
+This application incorporates proven UX patterns from leading DEX aggregators and crypto exchanges:
+
+### 1. **Modal-Based Token Selection** (Inspired by Jupiter Exchange & Matcha)
+- **Full-screen modal** with search and popular tokens grid
+- **Multi-chain visual indicators** with color-coded badges
+- **Fuzzy search** for quick token discovery
+- **Why**: Reduces cognitive load by focusing user attention on one task at a time, while providing quick access to frequently used tokens
+
+### 2. **Swap Interface Layout** (Inspired by Coinbase & Uniswap)
+- **Vertical card layout** with clear "Selling" and "Buying" sections
+- **Swap direction button** positioned between input cards
+- **Real-time USD value display** for both source and target amounts
+- **Why**: Familiar pattern that users recognize instantly, reducing learning curve and increasing confidence in transactions
+
+### 3. **Smart Data Fetching** (Inspired by Matcha & 1inch)
+- **Automatic price updates** with visual freshness indicators
+- **Optimistic UI updates** using TanStack Query's placeholder data
+- **Graceful error handling** with retry mechanisms
+- **Why**: Ensures users always see current prices without jarring loading states, critical for price-sensitive swap decisions
+
+### 4. **Quick Amount Buttons** (Inspired by Coinbase & Jupiter)
+- **Preset USD amounts** ($100, $500, $1000) for rapid input
+- **One-click selection** to reduce friction
+- **Why**: Speeds up common workflows and reduces input errors
 
 ## Installation
 
@@ -98,14 +134,16 @@ src/
 │   └── ErrorBanner.tsx
 ├── features/swap/        # Swap feature module
 │   ├── SwapPage.tsx      # Main page component
-│   ├── hooks/            # Custom React hooks
-│   │   ├── useTokenInfo.ts
-│   │   ├── usePriceInfo.ts
+│   ├── hooks/            # Custom React hooks (TanStack Query)
+│   │   ├── useTokenInfo.ts    # Token metadata with 1hr cache
+│   │   ├── usePriceInfo.ts    # Price data with 30s cache + auto-refetch
 │   │   └── useDebouncedValue.ts
 │   ├── logic/            # Business logic
 │   │   └── convert.ts
 │   └── store/            # State management
 │       └── swapStore.ts
+├── providers/            # React context providers
+│   └── QueryProvider.tsx # TanStack Query configuration
 ├── services/             # API services
 │   └── funkit.ts         # FunKit API wrapper
 ├── types/                # TypeScript types
@@ -164,7 +202,15 @@ The application uses the FunKit API to fetch:
 
 ## Performance Optimizations
 
-- Debounced USD input to reduce API calls
-- Memoized calculations to prevent unnecessary re-renders
-- Lazy loading of token data
-- Efficient state management with Zustand
+### Data Fetching & Caching (TanStack Query v5)
+- **Intelligent cache management** - Token metadata cached for 1 hour, prices for 30 seconds
+- **Automatic background refetching** - Prices update every 30 seconds and on window focus
+- **Placeholder data strategy** - Previous data shown during refetch to eliminate loading flashes
+- **Deduplication** - Multiple components requesting same data share a single network request
+- **Retry with exponential backoff** - Failed requests retry up to 2 times with smart delays
+
+### UI & State Management
+- **Debounced USD input** - 300ms delay to reduce API calls during typing
+- **Memoized calculations** - `useMemo` prevents unnecessary re-renders
+- **Persistent state** - Zustand middleware saves user preferences to localStorage
+- **Optimistic updates** - UI responds instantly while data fetches in background
