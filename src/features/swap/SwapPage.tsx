@@ -288,9 +288,16 @@ export const SwapPage: React.FC = () => {
             onChange={() => {}} // Read-only
             selectedToken={targetSymbol}
             onOpenTokenSelector={handleOpenTargetModal}
+            onQuickSelectToken={(symbol) => {
+              const token = TOKENS.find((t) => t.symbol === symbol);
+              if (token) {
+                setTargetSymbol(symbol);
+              }
+            }}
             usdValue={usdValue}
             isLoading={targetTokenInfo.loading || targetPriceInfo.loading}
             isFetching={targetTokenInfo.fetching || targetPriceInfo.fetching}
+            showPopularTokens={true}
             disabled
           />
 

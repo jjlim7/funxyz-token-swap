@@ -22,7 +22,7 @@ export interface SwapState {
 
 const INITIAL_STATE = {
   sourceSymbol: "USDC",
-  targetSymbol: "ETH",
+  targetSymbol: null, // Start with no target token selected
   sourceTokenAmount: "100",
   slippageTolerance: 0.5, // Default 0.5%
   favoriteTokens: ["USDC", "ETH"], // Default favorites
