@@ -5,6 +5,7 @@
 
 import React from "react";
 import { TokenIcon } from "./TokenIcon";
+import { Loader } from "./Loader";
 
 interface SwapInputProps {
   label: "Sell" | "Buy" | "Selling" | "Buying";
@@ -15,6 +16,7 @@ interface SwapInputProps {
   tokenAmount?: string;
   usdValue?: string;
   isLoading?: boolean;
+  isFetching?: boolean;
   disabled?: boolean;
 }
 
@@ -27,6 +29,7 @@ export const SwapInput: React.FC<SwapInputProps> = ({
   tokenAmount,
   usdValue,
   isLoading,
+  isFetching,
   disabled,
 }) => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,17 +48,25 @@ export const SwapInput: React.FC<SwapInputProps> = ({
   };
 
   return (
-    <div className={`bg-bg-tertiary border border-border rounded-2xl p-lg transition-all duration-base hover:border-bg-hover focus-within:border-primary focus-within:bg-bg-tertiary ${disabled ? "cursor-not-allowed" : ""}`}>
+    <div className={`relative bg-bg-tertiary border border-border rounded-2xl p-lg transition-all duration-base hover:border-bg-hover focus-within:border-primary focus-within:bg-bg-tertiary ${disabled ? "cursor-not-allowed" : ""} ${isFetching ? "opacity-70" : ""}`}>
       <div className="flex items-center justify-between mb-sm">
         <label className="text-[0.8125rem] font-semibold text-text-secondary capitalize">{label}</label>
-        {tokenAmount && !isLoading && (
-          <span className="text-xs text-text-tertiary">
-            {tokenAmount} {selectedToken}
-          </span>
-        )}
-        {isLoading && (
-          <span className="text-xs text-primary animate-pulse">Loading...</span>
-        )}
+        <div className="flex items-center gap-sm">
+          {tokenAmount && !isLoading && !isFetching && (
+            <span className="text-xs text-text-tertiary">
+              {tokenAmount} {selectedToken}
+            </span>
+          )}
+          {isLoading && !isFetching && (
+            <span className="text-xs text-primary animate-pulse">Loading...</span>
+          )}
+          {isFetching && (
+            <div className="flex items-center gap-xs">
+              <Loader size="small" />
+              <span className="text-xs text-primary">Updating...</span>
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="flex items-center gap-md mb-sm">
