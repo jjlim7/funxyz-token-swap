@@ -1,14 +1,15 @@
 /**
- * Hook for fetching price information
+ * Hook for fetching price information using TanStack Query
  */
 
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import type { PriceInfo, ApiError } from "../../../types/api";
 import { fetchPriceInfo } from "../../../services/funkit";
 
 interface UsePriceInfoState {
   data: PriceInfo | null;
   loading: boolean;
+  fetching: boolean;
   error: ApiError | null;
 }
 
@@ -16,35 +17,30 @@ export function usePriceInfo(
   chainId: string | null,
   tokenAddress: string | null
 ): UsePriceInfoState {
-  const [state, setState] = useState<UsePriceInfoState>({
-    data: null,
-    loading: false,
-    error: null,
+  const { data, isLoading, isFetching, error } = useQuery<PriceInfo, ApiError>({
+    // Unique cache key per token price (chainId + tokenAddress combination)
+    queryKey: ["priceInfo", chainId, tokenAddress],
+    // Query function
+    queryFn: () => {
+      if (!chainId || !tokenAddress) {
+        throw new Error("Chain ID and token address are required");
+      }
+      return fetchPriceInfo(chainId, tokenAddress);
+    },
+    // Only run query if we have both chainId and tokenAddress
+    enabled: Boolean(chainId && tokenAddress),
+    // Price data is stale after 30 seconds (inherits from QueryClient default)
+    // Refetch on window focus to get fresh prices
+    refetchOnWindowFocus: true,
+    // Refetch every 30 seconds in the background
+    refetchInterval: 30 * 1000,
   });
 
-  useEffect(() => {
-    if (!chainId || !tokenAddress) {
-      setState({ data: null, loading: false, error: null });
-      return;
-    }
-
-    const fetchData = async () => {
-      setState({ data: null, loading: true, error: null });
-      try {
-        const priceInfo = await fetchPriceInfo(chainId, tokenAddress);
-        setState({ data: priceInfo, loading: false, error: null });
-      } catch (error) {
-        setState({
-          data: null,
-          loading: false,
-          error: error as ApiError,
-        });
-      }
-    };
-
-    fetchData();
-  }, [chainId, tokenAddress]);
-
-  return state;
+  return {
+    data: data ?? null,
+    loading: isLoading,
+    fetching: isFetching,
+    error: error ?? null,
+  };
 }
 

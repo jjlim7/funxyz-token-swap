@@ -267,6 +267,7 @@ export const SwapPage: React.FC = () => {
             onOpenTokenSelector={handleOpenSourceModal}
             usdValue={usdValue}
             isLoading={sourceTokenInfo.loading || sourcePriceInfo.loading}
+            isFetching={sourceTokenInfo.fetching || sourcePriceInfo.fetching}
           />
 
           {/* Swap Button */}
@@ -289,6 +290,7 @@ export const SwapPage: React.FC = () => {
             onOpenTokenSelector={handleOpenTargetModal}
             usdValue={usdValue}
             isLoading={targetTokenInfo.loading || targetPriceInfo.loading}
+            isFetching={targetTokenInfo.fetching || targetPriceInfo.fetching}
             disabled
           />
 

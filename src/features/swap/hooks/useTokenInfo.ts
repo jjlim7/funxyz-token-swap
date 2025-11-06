@@ -1,14 +1,15 @@
 /**
- * Hook for fetching token information
+ * Hook for fetching token information using TanStack Query
  */
 
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import type { TokenInfo, ApiError } from "../../../types/api";
 import { fetchTokenInfo } from "../../../services/funkit";
 
 interface UseTokenInfoState {
   data: TokenInfo | null;
   loading: boolean;
+  fetching: boolean;
   error: ApiError | null;
 }
 
@@ -16,35 +17,29 @@ export function useTokenInfo(
   chainId: string | null,
   symbol: string | null
 ): UseTokenInfoState {
-  const [state, setState] = useState<UseTokenInfoState>({
-    data: null,
-    loading: false,
-    error: null,
+  const { data, isLoading, isFetching, error } = useQuery<TokenInfo, ApiError>({
+    // Unique cache key per token (chainId + symbol combination)
+    queryKey: ["tokenInfo", chainId, symbol],
+    // Query function
+    queryFn: () => {
+      if (!chainId || !symbol) {
+        throw new Error("Chain ID and symbol are required");
+      }
+      return fetchTokenInfo(chainId, symbol);
+    },
+    // Only run query if we have both chainId and symbol
+    enabled: Boolean(chainId && symbol),
+    // Token info rarely changes, cache for 1 hour
+    staleTime: 60 * 60 * 1000,
+    // Keep in cache for 24 hours
+    gcTime: 24 * 60 * 60 * 1000,
   });
 
-  useEffect(() => {
-    if (!chainId || !symbol) {
-      setState({ data: null, loading: false, error: null });
-      return;
-    }
-
-    const fetchData = async () => {
-      setState({ data: null, loading: true, error: null });
-      try {
-        const tokenInfo = await fetchTokenInfo(chainId, symbol);
-        setState({ data: tokenInfo, loading: false, error: null });
-      } catch (error) {
-        setState({
-          data: null,
-          loading: false,
-          error: error as ApiError,
-        });
-      }
-    };
-
-    fetchData();
-  }, [chainId, symbol]);
-
-  return state;
+  return {
+    data: data ?? null,
+    loading: isLoading,
+    fetching: isFetching,
+    error: error ?? null,
+  };
 }
 
