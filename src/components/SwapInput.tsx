@@ -55,7 +55,7 @@ export const SwapInput: React.FC<SwapInputProps> = ({
   };
 
   return (
-    <div className={`relative bg-bg-tertiary border border-border rounded-2xl p-lg transition-all duration-base hover:border-bg-hover focus-within:border-primary focus-within:bg-bg-tertiary ${disabled ? "cursor-not-allowed" : ""} ${isFetching ? "opacity-70" : ""}`}>
+    <div className={`relative bg-bg-tertiary border border-border rounded-2xl p-lg transition-all duration-base [&:has(input:focus)]:border-[#C7F284] [&:has(input:focus)]:shadow-[0_0_20px_rgba(199,242,132,0.4)] ${disabled ? "cursor-not-allowed" : ""} ${isFetching ? "opacity-70" : ""}`}>
       <div className="flex items-center justify-between mb-sm">
         <label className="text-[0.8125rem] font-semibold text-text-secondary capitalize">{label}</label>
         <div className="flex items-center gap-sm">
@@ -76,7 +76,24 @@ export const SwapInput: React.FC<SwapInputProps> = ({
         </div>
       </div>
 
-      {/* Show input and token selector when token is selected, or just popular tokens when empty */}
+      {/* Popular token icons - always show when enabled, positioned above */}
+      {showPopularTokens && onQuickSelectToken && (
+        <div className="flex items-center gap-xs justify-end mb-xs">
+          {POPULAR_TOKENS.map((symbol) => (
+            <button
+              key={symbol}
+              type="button"
+              className="w-7 h-7 rounded-full bg-bg-secondary border border-border flex items-center justify-center overflow-hidden cursor-pointer transition-all duration-base hover:bg-bg-hover hover:border-[#C7F284] hover:scale-110 hover:shadow-[0_0_16px_rgba(199,242,132,0.4)] active:scale-95"
+              onClick={() => onQuickSelectToken(symbol)}
+              title={`Select ${symbol}`}
+            >
+              <TokenIcon symbol={symbol} size={22} />
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Show input and token selector when token is selected, or just select button when empty */}
       {selectedToken ? (
         <div className="flex items-center gap-md mb-sm">
           <input
@@ -89,7 +106,7 @@ export const SwapInput: React.FC<SwapInputProps> = ({
           />
 
           <button
-            className="flex items-center gap-sm px-md py-sm border border-border rounded-xl cursor-pointer transition-all duration-base flex-shrink-0 bg-bg-secondary hover:bg-bg-hover hover:border-primary"
+            className="flex items-center gap-sm px-md py-sm border border-border rounded-xl cursor-pointer transition-all duration-base flex-shrink-0 bg-bg-secondary hover:bg-bg-hover hover:border-[#C7F284] hover:shadow-[0_0_20px_rgba(199,242,132,0.3)]"
             onClick={onOpenTokenSelector}
             type="button"
           >
@@ -101,39 +118,19 @@ export const SwapInput: React.FC<SwapInputProps> = ({
           </button>
         </div>
       ) : (
-        <div className="mb-sm">
-          {/* Popular token icons - right aligned and compact, positioned above */}
-          {showPopularTokens && onQuickSelectToken && (
-            <div className="flex items-center gap-xs justify-end mb-xs">
-              {POPULAR_TOKENS.map((symbol) => (
-                <button
-                  key={symbol}
-                  type="button"
-                  className="w-7 h-7 rounded-full bg-bg-secondary border border-border flex items-center justify-center overflow-hidden cursor-pointer transition-all duration-base hover:bg-bg-hover hover:border-primary hover:scale-110 active:scale-95"
-                  onClick={() => onQuickSelectToken(symbol)}
-                  title={`Select ${symbol}`}
-                >
-                  <TokenIcon symbol={symbol} size={22} />
-                </button>
-              ))}
-            </div>
-          )}
+        <div className="flex items-center gap-md mb-sm">
+          {/* Empty state - just show 0 */}
+          <div className="text-[2rem] font-semibold text-text-tertiary flex-1">0</div>
 
-          {/* Main row with 0 and button at same height */}
-          <div className="flex items-center gap-md">
-            {/* Empty state - just show 0 */}
-            <div className="text-[2rem] font-semibold text-text-tertiary flex-1">0</div>
-
-            {/* Select token button - inline/compact on the right, same height as selected token button */}
-            <button
-              className="flex items-center gap-sm px-md py-sm border border-[#C7F284] bg-[#C7F284] text-[#0D111C] rounded-xl cursor-pointer transition-all duration-base flex-shrink-0 font-semibold hover:bg-[#B5E070] hover:border-[#B5E070] active:scale-[0.98]"
-              onClick={onOpenTokenSelector}
-              type="button"
-            >
-              <span className="text-base font-semibold">Select token</span>
-              <span className="text-xs">▼</span>
-            </button>
-          </div>
+          {/* Select token button - inline/compact on the right, same height as selected token button */}
+          <button
+            className="flex items-center gap-sm px-md py-sm border border-[#C7F284] bg-[#C7F284] text-[#0D111C] rounded-xl cursor-pointer transition-all duration-base flex-shrink-0 font-semibold hover:bg-[#B5E070] hover:border-[#B5E070] hover:shadow-[0_0_24px_rgba(199,242,132,0.5)] active:scale-[0.98]"
+            onClick={onOpenTokenSelector}
+            type="button"
+          >
+            <span className="text-base font-semibold">Select token</span>
+            <span className="text-xs">▼</span>
+          </button>
         </div>
       )}
 
@@ -142,43 +139,6 @@ export const SwapInput: React.FC<SwapInputProps> = ({
           {usdValue ? `$${usdValue}` : (value && !isNaN(parseFloat(value)) ? `$${parseFloat(value).toFixed(2)}` : "$0")}
         </span>
       </div>
-
-      {/* Quick Amount Buttons - Only show for Sell/Selling input */}
-      {(label === "Sell" || label === "Selling") && !disabled && (
-        <div className="flex gap-sm mt-md pt-md border-t border-border">
-          <button
-            type="button"
-            className="flex-1 px-md py-sm border border-border bg-bg-secondary rounded-lg text-[0.8125rem] font-semibold text-text-primary cursor-pointer transition-all duration-base hover:bg-bg-hover hover:border-primary active:scale-[0.98]"
-            onClick={() => onChange("100")}
-          >
-            $100
-          </button>
-          <button
-            type="button"
-            className="flex-1 px-md py-sm border border-border bg-bg-secondary rounded-lg text-[0.8125rem] font-semibold text-text-primary cursor-pointer transition-all duration-base hover:bg-bg-hover hover:border-primary active:scale-[0.98]"
-            onClick={() => onChange("500")}
-          >
-            $500
-          </button>
-          <button
-            type="button"
-            className="flex-1 px-md py-sm border border-border bg-bg-secondary rounded-lg text-[0.8125rem] font-semibold text-text-primary cursor-pointer transition-all duration-base hover:bg-bg-hover hover:border-primary active:scale-[0.98]"
-            onClick={() => onChange("1000")}
-          >
-            $1K
-          </button>
-          <button
-            type="button"
-            className="flex-1 px-md py-sm border border-success bg-success rounded-lg text-[0.8125rem] font-semibold text-[#0D111C] cursor-pointer transition-all duration-base hover:bg-success-dark hover:border-success-dark active:scale-[0.98]"
-            onClick={() => {
-              // For now, set to a reasonable max. In future, use wallet balance
-              onChange("10000");
-            }}
-          >
-            Max
-          </button>
-        </div>
-      )}
     </div>
   );
 };

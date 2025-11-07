@@ -273,7 +273,7 @@ export const SwapPage: React.FC = () => {
           {/* Swap Button */}
           <div className="flex items-center justify-center -my-sm relative z-[5]">
             <button
-              className="w-11 h-11 rounded-full bg-bg-secondary border-2 border-border flex items-center justify-center text-lg text-text-primary cursor-pointer transition-all duration-base hover:bg-bg-hover hover:border-primary hover:rotate-180 active:rotate-180 active:scale-95"
+              className="w-11 h-11 rounded-full bg-bg-secondary border-2 border-border flex items-center justify-center text-lg text-text-primary cursor-pointer transition-all duration-base hover:bg-bg-hover hover:border-[#C7F284] hover:rotate-180 hover:shadow-[0_0_20px_rgba(199,242,132,0.5)] active:rotate-180 active:scale-95"
               onClick={handleSwapTokens}
               aria-label="Swap tokens"
             >
