@@ -4,8 +4,7 @@ A modern, responsive single-page application for exploring token prices and conv
 
 ## Screenshot
 
-![Token Price Explorer](./screenshot.png)
-*Add your screenshot here - replace `screenshot.png` with your actual screenshot file*
+![Token Price Explorer](./docs/screenshot.png)
 
 ## Features
 
@@ -64,14 +63,23 @@ This application incorporates proven UX patterns from leading DEX aggregators an
 <br/>
 <strong>Matcha Swap</strong>
 <br/>
-<em>Clean, minimal interface with clear CTAs</em>
+
 </td>
 <td width="50%" align="center">
 <img src="./docs/screenshots/uniswap.png" alt="Uniswap Interface" width="100%"/>
 <br/>
 <strong>Uniswap</strong>
 <br/>
-<em>Industry standard with advanced features</em>
+
+</td>
+</tr>
+<tr>
+<td align="center" colspan="2">
+<img src="./docs/screenshots/jupiter-exchange.png" alt="Jupiter Exchange Interface" width="60%"/>
+<br/>
+<strong>Jupiter Exchange</strong>
+<br/>
+
 </td>
 </tr>
 </table>
@@ -110,19 +118,6 @@ This application incorporates proven UX patterns from leading DEX aggregators an
 - ✅ **One-click selection** - Reduces input friction
 - **Why**: Speeds up common workflows and reduces input errors for standard transaction sizes.
 
-### 🎯 Quality Gates
-
-This implementation meets the following quality standards observed in production DEXs:
-
-| Quality Metric | Target | Status |
-|----------------|--------|--------|
-| **First Contentful Paint** | < 1.5s | ✅ Achieved with Vite + code splitting |
-| **Time to Interactive** | < 3s | ✅ Optimized bundle size (294KB gzipped to 89KB) |
-| **Price Update Latency** | < 500ms | ✅ TanStack Query cache + background refetch |
-| **Loading State Visibility** | Always visible | ✅ Small spinner + opacity change |
-| **Error Recovery** | User-initiated retry | ✅ Dismissible banners with retry buttons |
-| **Mobile Responsiveness** | Full feature parity | ✅ Tailwind responsive design |
-| **Accessibility** | ARIA labels + keyboard nav | ✅ Semantic HTML + focus management |
 
 ### 🏆 Competitive Advantages
 
@@ -156,13 +151,12 @@ The application will be available at `http://localhost:5173`
 
 ### Build for Production
 
-```bash
-npm run build
 ```
-
 ### Preview Production Build
 
 ```bash
+npm run build
+
 npm run preview
 ```
 
@@ -210,48 +204,6 @@ src/
     ├── error-banner.css
     └── loader.css
 ```
-
-## API Integration
-
-The application uses the FunKit API to fetch:
-
-- **Token Information**: Contract addresses, decimals, and metadata
-- **Price Information**: Current USD prices for tokens
-
-### API Functions Used
-
-- `getAssetErc20ByChainAndSymbol()` - Fetch token details
-- `getAssetPriceInfo()` - Fetch token prices
-
-## Features in Detail
-
-### Token Selection
-- Click on token buttons to select source and target tokens
-- Active token is highlighted with a blue background
-- Supports 4 major tokens across different chains
-
-### Amount Input
-- Enter USD amounts to convert
-- Input is validated for positive numbers
-- Debounced to reduce API calls (300ms delay)
-- Shows error messages for invalid input
-
-### Conversion Display
-- Shows token amounts with appropriate decimal formatting
-- Displays current token prices
-- Shows USD equivalent values
-- Animated arrow between source and target
-
-### Error Handling
-- Network errors are caught and displayed
-- Retry buttons allow users to refetch data
-- Dismiss buttons to clear error messages
-- Graceful fallbacks when data is unavailable
-
-### Loading States
-- Spinner shown while fetching token/price data
-- Loading indicators on token boxes
-- Disabled input during loading
 
 ## Performance Optimizations
 
